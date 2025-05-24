@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strings"
 	"sync"
 
 	"github.com/g0ldencybersec/Caduceus/pkg/types"
@@ -126,14 +127,20 @@ func (rw *ResultsWorker) Run(args types.ScrapeArgs) {
 				rw.outputChannel <- string(outputJSON)
 			} else {
 				for _, domain := range result.Certificate.Domains {
+					// Extract just the IP without the port for cleaner output
+					ip := result.Certificate.OriginIP
+					if colon := strings.LastIndex(ip, ":"); colon != -1 {
+						ip = ip[:colon]
+					}
+				
 					if args.PrintWildcards {
 						if utils.IsWilcard(domain) || utils.IsValidDomain(domain) {
-							rw.outputChannel <- domain
+							rw.outputChannel <- fmt.Sprintf("%s %s", domain, ip)
 							continue
 						}
 					}
 					if utils.IsValidDomain(domain) && !utils.IsWilcard(domain) {
-						rw.outputChannel <- domain
+						rw.outputChannel <- fmt.Sprintf("%s %s", domain, ip)
 					}
 				}
 			}
