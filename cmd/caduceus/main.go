@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/g0ldencybersec/Caduceus/pkg/scrape"
-	"github.com/g0ldencybersec/Caduceus/pkg/types"
+	"github.com/Nishantbhagat57/Caduceus/pkg/scrape"
+	"github.com/Nishantbhagat57/Caduceus/pkg/types"
 )
 
 func main() {
