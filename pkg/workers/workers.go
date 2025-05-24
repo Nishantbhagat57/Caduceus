@@ -120,19 +120,28 @@ func NewResultsWorker(resultInput <-chan types.Result, outputChannel chan<- stri
 }
 
 func (rw *ResultsWorker) Run(args types.ScrapeArgs) {
-	for result := range rw.resultInput {
+	for result := range rw.resultInput {  // Each IP result
 		if result.Hit {
 			if args.JsonOutput {
 				outputJSON, _ := json.Marshal(result.Certificate)
 				rw.outputChannel <- string(outputJSON)
 			} else {
+				// Extract just the IP without the port for cleaner output
+				ip := result.Certificate.OriginIP
+				if colon := strings.LastIndex(ip, ":"); colon != -1 {
+					ip = ip[:colon]
+				}
+
+				// Create fresh map for THIS certificate/IP only
+				seenDomains := make(map[string]bool)
+
 				for _, domain := range result.Certificate.Domains {
-					// Extract just the IP without the port for cleaner output
-					ip := result.Certificate.OriginIP
-					if colon := strings.LastIndex(ip, ":"); colon != -1 {
-						ip = ip[:colon]
+					// Skip if we've already processed this domain for THIS IP
+					if seenDomains[domain] {
+						continue
 					}
-				
+					seenDomains[domain] = true
+
 					if args.PrintWildcards {
 						if utils.IsWilcard(domain) || utils.IsValidDomain(domain) {
 							rw.outputChannel <- fmt.Sprintf("%s %s", domain, ip)
@@ -152,6 +161,7 @@ func (rw *ResultsWorker) Run(args types.ScrapeArgs) {
 				rw.outputChannel <- fmt.Sprintf("Failed to get SSL certificate from %s: %v", result.IP, result.Error)
 			}
 		}
+		// seenDomains map is garbage collected here when it goes out of scope
 	}
 }
 
