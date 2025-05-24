@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/g0ldencybersec/Caduceus/pkg/types"
+	"github.com/Nishantbhagat57/Caduceus/pkg/types"
 )
 
 type Stats struct {
