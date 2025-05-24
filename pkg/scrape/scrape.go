@@ -6,9 +6,9 @@ import (
 
 	"time"
 
-	"github.com/g0ldencybersec/Caduceus/pkg/types"
-	"github.com/g0ldencybersec/Caduceus/pkg/utils"
-	"github.com/g0ldencybersec/Caduceus/pkg/workers"
+	"github.com/Nishantbhagat57/Caduceus/pkg/types"
+	"github.com/Nishantbhagat57/Caduceus/pkg/utils"
+	"github.com/Nishantbhagat57/Caduceus/pkg/workers"
 )
 
 func RunScrape(args types.ScrapeArgs) {
